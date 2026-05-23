@@ -208,8 +208,21 @@ export default function ProfileScreen({
   }
 
   async function generatePDF() {
-
+alert("PDF START");
     try {
+      console.log(
+  "WYPŁATA:",
+  calculateSalary()
+);
+
+console.log(
+  "GODZINY:",
+  calculateTotalHours()
+);
+
+console.log(
+  sessions
+);
 
       const response =
         await fetch(
