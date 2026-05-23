@@ -1,4 +1,5 @@
 const path = require("path");
+
 const express =
   require("express");
 
@@ -11,9 +12,16 @@ const PDFDocument =
 const app =
   express();
 
-app.use(cors());
+// CORS
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
-app.use(express.json());
+app.use(
+  express.json()
+);
 
 app.post(
   "/generate-pdf",
@@ -32,6 +40,7 @@ app.post(
         margin: 50,
       });
 
+    // HEADERS
     res.setHeader(
       "Content-Type",
       "application/pdf"
@@ -44,16 +53,18 @@ app.post(
 
     doc.pipe(res);
 
-    // TYTUŁ
+    // FONT
     doc.font(
-  path.join(
-    __dirname,
-    "fonts",
-    "Roboto-Regular.ttf"
-  )
-);
+      path.join(
+        __dirname,
+        "fonts",
+        "Roboto-Regular.ttf"
+      )
+    );
+
+    // TYTUŁ
     doc
-      .fontSize(26)
+      .fontSize(28)
       .text(
         "Ewidencja czasu pracy",
         {
@@ -65,29 +76,39 @@ app.post(
 
     // DANE PRACOWNIKA
     doc
-      .fontSize(16)
+      .fontSize(18)
       .text(
-        `Pracownik: ${employeeName || "Brak danych"}`
+        `Pracownik: ${
+          employeeName ||
+          "Brak danych"
+        }`
       );
 
     doc.moveDown();
 
     doc.text(
-      `Laczny czas pracy: ${totalHours || "0h 0min"}`
+      `Łączny czas pracy: ${
+        totalHours ||
+        "0h 0min"
+      }`
     );
 
     doc.moveDown();
 
     doc.text(
-      `Do wyplaty: ${amount || 0} zl`
+      `Do wypłaty: ${
+        amount || 0
+      } zł`
     );
 
     doc.moveDown(2);
 
-    // HISTORIA PRACY
+    // HISTORIA
     doc
-      .fontSize(20)
-      .text("Historia pracy");
+      .fontSize(22)
+      .text(
+        "Historia pracy"
+      );
 
     doc.moveDown();
 
@@ -102,8 +123,26 @@ app.post(
           index
         ) => {
 
+          const startDate =
+            session.started_at
+              ? new Date(
+                  session.started_at
+                ).toLocaleString(
+                  "pl-PL"
+                )
+              : "-";
+
+          const endDate =
+            session.ended_at
+              ? new Date(
+                  session.ended_at
+                ).toLocaleString(
+                  "pl-PL"
+                )
+              : "W trakcie";
+
           doc
-            .fontSize(14)
+            .fontSize(15)
             .text(
               `${index + 1}. ${
                 session.location_name ||
@@ -112,17 +151,11 @@ app.post(
             );
 
           doc.text(
-            `START: ${
-              session.started_at ||
-              "-"
-            }`
+            `START: ${startDate}`
           );
 
           doc.text(
-            `STOP: ${
-              session.ended_at ||
-              "W trakcie"
-            }`
+            `STOP: ${endDate}`
           );
 
           doc.moveDown();
@@ -132,7 +165,7 @@ app.post(
     } else {
 
       doc
-        .fontSize(14)
+        .fontSize(15)
         .text(
           "Brak zapisanych sesji."
         );
@@ -142,7 +175,7 @@ app.post(
     doc.moveDown(3);
 
     doc
-      .fontSize(16)
+      .fontSize(18)
       .text(
         "Podpis pracownika:"
       );
