@@ -1,3 +1,5 @@
+import { Platform }
+from "react-native";
 import {
   View,
   Text,
@@ -184,78 +186,97 @@ export default function ProfileScreen({
     return `${hours}h ${minutes}min`;
   }
 
-  async function generatePDF() {
+async function generatePDF() {
 
-    try {
+  try {
 
-      const totalHours =
-        calculateTotalHours();
+    const totalHours =
+      calculateTotalHours();
 
-      const response =
-        await fetch(
-          "https://frescapp.onrender.com/generate-pdf",
-          {
-            method: "POST",
+    const response =
+      await fetch(
+        "https://frescapp.onrender.com/generate-pdf",
+        {
+          method: "POST",
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
+          headers: {
+            "Content-Type":
+              "application/json",
+          },
 
-            body: JSON.stringify({
-              employeeName:
-                userData?.full_name,
+          body: JSON.stringify({
+            employeeName:
+              userData?.full_name,
 
-              employeeEmail:
-                user.email,
+            employeeEmail:
+              user.email,
 
-              totalHours,
+            totalHours,
 
-              sessions,
-            }),
-          }
-        );
-
-      const blob =
-        await response.blob();
-
-      const reader =
-        new FileReader();
-
-      reader.onload = async () => {
-
-        const base64data =
-          reader.result.split(",")[1];
-
-        const fileUri =
-          FileSystem.documentDirectory +
-          "ewidencja.pdf";
-
-        await FileSystem.writeAsStringAsync(
-          fileUri,
-          base64data,
-          {
-            encoding:
-              FileSystem.EncodingType.Base64,
-          }
-        );
-
-        await Sharing.shareAsync(
-          fileUri
-        );
-      };
-
-      reader.readAsDataURL(blob);
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert(
-        "Błąd generowania PDF 😢"
+            sessions,
+          }),
+        }
       );
+
+    const blob =
+      await response.blob();
+
+    // WEB
+    if (Platform.OS === "web") {
+
+      const url =
+        window.URL.createObjectURL(blob);
+
+      const a =
+        document.createElement("a");
+
+      a.href = url;
+
+      a.download =
+        "ewidencja.pdf";
+
+      a.click();
+
+      return;
     }
+
+    // ANDROID / IOS
+    const reader =
+      new FileReader();
+
+    reader.onload = async () => {
+
+      const base64data =
+        reader.result.split(",")[1];
+
+      const fileUri =
+        FileSystem.documentDirectory +
+        "ewidencja.pdf";
+
+      await FileSystem.writeAsStringAsync(
+        fileUri,
+        base64data,
+        {
+          encoding: "base64",
+        }
+      );
+
+      await Sharing.shareAsync(
+        fileUri
+      );
+    };
+
+    reader.readAsDataURL(blob);
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert(
+      "Błąd generowania PDF 😢"
+    );
   }
+}
 
   return (
 
