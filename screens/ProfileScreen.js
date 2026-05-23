@@ -1,5 +1,6 @@
 import { Platform }
 from "react-native";
+
 import {
   View,
   Text,
@@ -186,100 +187,141 @@ export default function ProfileScreen({
     return `${hours}h ${minutes}min`;
   }
 
-async function generatePDF() {
+  function calculateSalary() {
 
-  try {
+    const hourlyRate = 35;
+
+    let totalMinutes = 0;
+
+    sessions.forEach((session) => {
+
+      if (!session.ended_at) {
+        return;
+      }
+
+      const start =
+        new Date(
+          session.started_at
+        );
+
+      const end =
+        new Date(
+          session.ended_at
+        );
+
+      const diffMs =
+        end - start;
+
+      totalMinutes +=
+        Math.floor(
+          diffMs /
+          (1000 * 60)
+        );
+    });
 
     const totalHours =
-      calculateTotalHours();
+      totalMinutes / 60;
 
-    const response =
-      await fetch(
-        "https://frescapp.onrender.com/generate-pdf",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
-
-          body: JSON.stringify({
-            employeeName:
-  userData?.full_name || "Brak danych",
-
-            employeeEmail:
-              user.email,
-
-           totalHours:
-  calculateTotalHours(),
-
-amount: 0,
-
-            sessions,
-          }),
-        }
-      );
-
-    const blob =
-      await response.blob();
-
-    // WEB
-    if (Platform.OS === "web") {
-
-      const url =
-        window.URL.createObjectURL(blob);
-
-      const a =
-        document.createElement("a");
-
-      a.href = url;
-
-      a.download =
-        "ewidencja.pdf";
-
-      a.click();
-
-      return;
-    }
-
-    // ANDROID / IOS
-    const reader =
-      new FileReader();
-
-    reader.onload = async () => {
-
-      const base64data =
-        reader.result.split(",")[1];
-
-      const fileUri =
-        FileSystem.documentDirectory +
-        "ewidencja.pdf";
-
-      await FileSystem.writeAsStringAsync(
-        fileUri,
-        base64data,
-        {
-          encoding: "base64",
-        }
-      );
-
-      await Sharing.shareAsync(
-        fileUri
-      );
-    };
-
-    reader.readAsDataURL(blob);
-
-  } catch (error) {
-
-    console.log(error);
-
-    alert(
-      "Błąd generowania PDF 😢"
-    );
+    return (
+      totalHours *
+      hourlyRate
+    ).toFixed(2);
   }
-}
+
+  async function generatePDF() {
+
+    try {
+
+      const response =
+        await fetch(
+          "https://frescapp.onrender.com/generate-pdf",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+
+              employeeName:
+                userData?.full_name ||
+                "Brak danych",
+
+              employeeEmail:
+                user.email,
+
+              totalHours:
+                calculateTotalHours(),
+
+              amount:
+                calculateSalary(),
+
+              sessions,
+            }),
+          }
+        );
+
+      const blob =
+        await response.blob();
+
+      // WEB
+      if (Platform.OS === "web") {
+
+        const url =
+          window.URL.createObjectURL(blob);
+
+        const a =
+          document.createElement("a");
+
+        a.href = url;
+
+        a.download =
+          "ewidencja.pdf";
+
+        a.click();
+
+        return;
+      }
+
+      // ANDROID / IOS
+      const reader =
+        new FileReader();
+
+      reader.onload = async () => {
+
+        const base64data =
+          reader.result.split(",")[1];
+
+        const fileUri =
+          FileSystem.documentDirectory +
+          "ewidencja.pdf";
+
+        await FileSystem.writeAsStringAsync(
+          fileUri,
+          base64data,
+          {
+            encoding: "base64",
+          }
+        );
+
+        await Sharing.shareAsync(
+          fileUri
+        );
+      };
+
+      reader.readAsDataURL(blob);
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert(
+        "Błąd generowania PDF 😢"
+      );
+    }
+  }
 
   return (
 
@@ -351,6 +393,18 @@ amount: 0,
 
               <Text style={styles.summaryValue}>
                 {calculateTotalHours()}
+              </Text>
+
+            </View>
+
+            <View style={styles.summaryCard}>
+
+              <Text style={styles.summaryLabel}>
+                Do wypłaty 💰
+              </Text>
+
+              <Text style={styles.summaryValue}>
+                {calculateSalary()} zł
               </Text>
 
             </View>
