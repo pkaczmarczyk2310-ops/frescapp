@@ -214,6 +214,8 @@ async function generatePDF() {
            totalHours:
   calculateTotalHours(),
 
+amount: 0,
+
             sessions,
           }),
         }
