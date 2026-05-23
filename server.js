@@ -20,13 +20,16 @@ app.post(
   async (req, res) => {
 
     const {
-      employee,
-      hours,
-      salary,
+      employeeName,
+      totalHours,
+      amount,
+      sessions,
     } = req.body;
 
     const doc =
-      new PDFDocument();
+      new PDFDocument({
+        margin: 50,
+      });
 
     res.setHeader(
       "Content-Type",
@@ -35,37 +38,81 @@ app.post(
 
     res.setHeader(
       "Content-Disposition",
-
-      `attachment; filename=rozliczenie.pdf`
+      "attachment; filename=ewidencja.pdf"
     );
 
     doc.pipe(res);
 
-    doc.fontSize(28)
+    // TYTUŁ
+    doc
+      .fontSize(26)
       .text(
-        "Rozliczenie pracownika"
+        "Ewidencja czasu pracy",
+        {
+          align: "center",
+        }
       );
 
-    doc.moveDown();
+    doc.moveDown(2);
 
-    doc.fontSize(18)
+    // DANE
+    doc
+      .fontSize(16)
       .text(
-        `Pracownik: ${employee}`
+        `Pracownik: ${employeeName}`
       );
 
     doc.moveDown();
 
     doc.text(
-      `Godziny: ${hours}`
+      `Łączny czas pracy: ${totalHours}`
     );
 
     doc.moveDown();
 
     doc.text(
-      `Do wypłaty: ${salary} zł`
+      `Do wypłaty: ${amount} zł`
     );
 
     doc.moveDown(2);
+
+    // HISTORIA
+    doc
+      .fontSize(20)
+      .text("Historia pracy");
+
+    doc.moveDown();
+
+    sessions.forEach(
+      (session, index) => {
+
+        doc
+          .fontSize(14)
+          .text(
+            `${index + 1}. ${
+              session.location_name
+            }`
+          );
+
+        doc.text(
+          `START: ${
+            session.started_at
+          }`
+        );
+
+        doc.text(
+          `STOP: ${
+            session.ended_at ||
+            "W trakcie"
+          }`
+        );
+
+        doc.moveDown();
+      }
+    );
+
+    // PODPIS
+    doc.moveDown(3);
 
     doc.text(
       "Podpis pracownika:"
