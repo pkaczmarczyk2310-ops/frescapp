@@ -1,3 +1,4 @@
+const path = require("path");
 const express =
   require("express");
 
@@ -44,7 +45,13 @@ app.post(
     doc.pipe(res);
 
     // TYTUŁ
-    doc.font("./fonts/Roboto-Regular.ttf");
+    doc.font(
+  path.join(
+    __dirname,
+    "fonts",
+    "Roboto-Regular.ttf"
+  )
+);
     doc
       .fontSize(26)
       .text(
