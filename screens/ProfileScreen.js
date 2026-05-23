@@ -206,12 +206,13 @@ async function generatePDF() {
 
           body: JSON.stringify({
             employeeName:
-              userData?.full_name,
+  userData?.full_name || "Brak danych",
 
             employeeEmail:
               user.email,
 
-            totalHours,
+           totalHours:
+  calculateTotalHours(),
 
             sessions,
           }),
