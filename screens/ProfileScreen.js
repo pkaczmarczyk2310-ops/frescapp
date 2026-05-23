@@ -12,11 +12,11 @@ import {
   useState,
 } from "react";
 
-import * as Print
-from "expo-print";
-
 import * as Sharing
 from "expo-sharing";
+
+import * as FileSystem
+from "expo-file-system";
 
 import logo
 from "../assets/logo.png";
@@ -91,21 +91,21 @@ export default function ProfileScreen({
     await supabase.auth.signOut();
   }
 
-function formatDate(date) {
+  function formatDate(date) {
 
-  return new Date(date)
-    .toLocaleString(
-      "pl-PL",
-      {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
+    return new Date(date)
+      .toLocaleString(
+        "pl-PL",
+        {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
 
-        hour: "2-digit",
-        minute: "2-digit",
-      }
-    );
-}
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      );
+  }
 
   function calculateHours(
     start,
@@ -186,93 +186,75 @@ function formatDate(date) {
 
   async function generatePDF() {
 
-    let sessionsHtml = "";
+    try {
 
-    sessions.forEach((session) => {
+      const totalHours =
+        calculateTotalHours();
 
-      sessionsHtml += `
-        <div style="margin-bottom:20px;">
+      const response =
+        await fetch(
+          "https://frescapp.onrender.com/generate-pdf",
+          {
+            method: "POST",
 
-          <p>
-            START:
-            ${formatDate(session.started_at)}
-          </p>
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
 
-          <p>
-            STOP:
-            ${
-              session.ended_at
-                ? formatDate(session.ended_at)
-                : "W trakcie"
-            }
-          </p>
+            body: JSON.stringify({
+              employeeName:
+                userData?.full_name,
 
-          <p>
-            CZAS:
-            ${calculateHours(
-              session.started_at,
-              session.ended_at
-            )}
-          </p>
+              employeeEmail:
+                user.email,
 
-        </div>
-      `;
-    });
+              totalHours,
 
-    const html = `
-      <html>
+              sessions,
+            }),
+          }
+        );
 
-        <body
-          style="
-            font-family: Arial;
-            padding: 30px;
-          "
-        >
+      const blob =
+        await response.blob();
 
-          <h1>
-            Ewidencja czasu pracy
-          </h1>
+      const reader =
+        new FileReader();
 
-          <h2>
-            FrescApp
-          </h2>
+      reader.onload = async () => {
 
-          <hr />
+        const base64data =
+          reader.result.split(",")[1];
 
-          <h3>
-            Łączny czas pracy:
-            ${calculateTotalHours()}
-          </h3>
+        const fileUri =
+          FileSystem.documentDirectory +
+          "ewidencja.pdf";
 
-          <hr />
+        await FileSystem.writeAsStringAsync(
+          fileUri,
+          base64data,
+          {
+            encoding:
+              FileSystem.EncodingType.Base64,
+          }
+        );
 
-          ${sessionsHtml}
+        await Sharing.shareAsync(
+          fileUri
+        );
+      };
 
-          <br /><br /><br />
+      reader.readAsDataURL(blob);
 
-          <p>
-            Podpis pracownika:
-            __________________
-          </p>
+    } catch (error) {
 
-          <br /><br />
+      console.log(error);
 
-          <p>
-            Podpis managera:
-            __________________
-          </p>
-
-        </body>
-
-      </html>
-    `;
-
-    const { uri } =
-      await Print.printToFileAsync({
-        html,
-      });
-
-    await Sharing.shareAsync(uri);
+      alert(
+        "Błąd generowania PDF 😢"
+      );
+    }
   }
 
   return (
@@ -378,8 +360,8 @@ function formatDate(date) {
             </Text>
 
             <Text style={styles.location}>
-  📍 {item.location_name}
-</Text>
+              📍 {item.location_name}
+            </Text>
 
             <Text style={styles.value}>
               {
@@ -524,9 +506,9 @@ const styles = StyleSheet.create({
   },
 
   location: {
-  color: "#666",
-  fontSize: 14,
-  marginBottom: 12,
-},
+    color: "#666",
+    fontSize: 14,
+    marginBottom: 12,
+  },
 
 });
