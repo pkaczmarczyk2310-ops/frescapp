@@ -44,6 +44,7 @@ app.post(
     doc.pipe(res);
 
     // TYTUŁ
+    doc.font("./fonts/Roboto-Regular.ttf");
     doc
       .fontSize(26)
       .text(
