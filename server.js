@@ -55,68 +55,89 @@ app.post(
 
     doc.moveDown(2);
 
-    // DANE
+    // DANE PRACOWNIKA
     doc
       .fontSize(16)
       .text(
-        `Pracownik: ${employeeName}`
+        `Pracownik: ${employeeName || "Brak danych"}`
       );
 
     doc.moveDown();
 
     doc.text(
-      `Łączny czas pracy: ${totalHours}`
+      `Laczny czas pracy: ${totalHours || "0h 0min"}`
     );
 
     doc.moveDown();
 
     doc.text(
-      `Do wypłaty: ${amount} zł`
+      `Do wyplaty: ${amount || 0} zl`
     );
 
     doc.moveDown(2);
 
-    // HISTORIA
+    // HISTORIA PRACY
     doc
       .fontSize(20)
       .text("Historia pracy");
 
     doc.moveDown();
 
-    sessions.forEach(
-      (session, index) => {
+    if (
+      sessions &&
+      sessions.length > 0
+    ) {
 
-        doc
-          .fontSize(14)
-          .text(
-            `${index + 1}. ${
-              session.location_name
+      sessions.forEach(
+        (
+          session,
+          index
+        ) => {
+
+          doc
+            .fontSize(14)
+            .text(
+              `${index + 1}. ${
+                session.location_name ||
+                "Brak lokalizacji"
+              }`
+            );
+
+          doc.text(
+            `START: ${
+              session.started_at ||
+              "-"
             }`
           );
 
-        doc.text(
-          `START: ${
-            session.started_at
-          }`
-        );
+          doc.text(
+            `STOP: ${
+              session.ended_at ||
+              "W trakcie"
+            }`
+          );
 
-        doc.text(
-          `STOP: ${
-            session.ended_at ||
-            "W trakcie"
-          }`
-        );
+          doc.moveDown();
+        }
+      );
 
-        doc.moveDown();
-      }
-    );
+    } else {
+
+      doc
+        .fontSize(14)
+        .text(
+          "Brak zapisanych sesji."
+        );
+    }
 
     // PODPIS
     doc.moveDown(3);
 
-    doc.text(
-      "Podpis pracownika:"
-    );
+    doc
+      .fontSize(16)
+      .text(
+        "Podpis pracownika:"
+      );
 
     doc.moveDown(4);
 
