@@ -1,5 +1,4 @@
-import { Platform }
-from "react-native";
+import { Platform } from "react-native";
 
 import {
   View,
@@ -15,17 +14,13 @@ import {
   useState,
 } from "react";
 
-import * as Sharing
-from "expo-sharing";
+import * as Sharing from "expo-sharing";
 
-import * as FileSystem
-from "expo-file-system";
+import * as FileSystem from "expo-file-system";
 
-import logo
-from "../assets/logo.png";
+import logo from "../assets/logo.png";
 
-import { supabase }
-from "../supabase";
+import { supabase } from "../supabase";
 
 export default function ProfileScreen({
   user,
@@ -36,6 +31,8 @@ export default function ProfileScreen({
 
   const [userData, setUserData] =
     useState(null);
+
+  const hourlyRate = 35;
 
   useEffect(() => {
 
@@ -146,7 +143,7 @@ export default function ProfileScreen({
     return `${hours}h ${minutes}min`;
   }
 
-  function calculateTotalHours() {
+  function getTotalMinutes() {
 
     let totalMinutes = 0;
 
@@ -170,11 +167,18 @@ export default function ProfileScreen({
         end - start;
 
       totalMinutes +=
-        Math.floor(
-          diffMs /
-          (1000 * 60)
-        );
+        diffMs /
+        1000 /
+        60;
     });
+
+    return totalMinutes;
+  }
+
+  function calculateTotalHours() {
+
+    const totalMinutes =
+      getTotalMinutes();
 
     const hours =
       Math.floor(
@@ -182,42 +186,17 @@ export default function ProfileScreen({
       );
 
     const minutes =
-      totalMinutes % 60;
+      Math.floor(
+        totalMinutes % 60
+      );
 
     return `${hours}h ${minutes}min`;
   }
 
   function calculateSalary() {
 
-    const hourlyRate = 35;
-
-    let totalMinutes = 0;
-
-    sessions.forEach((session) => {
-
-      if (!session.ended_at) {
-        return;
-      }
-
-      const start =
-        new Date(
-          session.started_at
-        );
-
-      const end =
-        new Date(
-          session.ended_at
-        );
-
-      const diffMs =
-        end - start;
-
-      totalMinutes +=
-        Math.floor(
-          diffMs /
-          (1000 * 60)
-        );
-    });
+    const totalMinutes =
+      getTotalMinutes();
 
     const totalHours =
       totalMinutes / 60;
@@ -285,7 +264,7 @@ export default function ProfileScreen({
         return;
       }
 
-      // ANDROID / IOS
+      // MOBILE
       const reader =
         new FileReader();
 
