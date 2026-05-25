@@ -248,7 +248,7 @@ console.log(
                 calculateTotalHours(),
 
               amount:
-                calculateSalary(),
+  Number(calculateSalary()),
 
               sessions,
             }),
