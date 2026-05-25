@@ -97,7 +97,7 @@ app.post(
 
     doc.text(
       `Do wypłaty: ${
-        amount || 0
+        Number(amount || 0).toFixed(2)
       } zł`
     );
 
