@@ -6,7 +6,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "bundler": "metro",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon.ico",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -25,7 +25,7 @@
       "edgeToEdgeEnabled": true
     },
     "web": {
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/icon.ico"
     },
     "plugins": [
       "expo-barcode-scanner"
