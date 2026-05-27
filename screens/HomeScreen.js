@@ -466,6 +466,8 @@ if (activeSession) {
 
         selectedLens="builtInWideAngleCamera"
 
+        zoom={0.01}
+
         style={{
           flex: 1,
         }}
