@@ -2,13 +2,13 @@
   "name": "frescapp",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "start": "node server.js",
-  "expo": "expo start",
-  "android": "expo start --android",
-  "ios": "expo start --ios",
-  "web": "expo start --web"
-},
+  "scripts": {
+    "start": "node server.js",
+    "expo": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.3",
@@ -25,6 +25,7 @@
     "expo-image-picker": "~17.0.11",
     "expo-location": "~19.0.8",
     "expo-print": "~15.0.8",
+    "expo-router": "^56.2.7",
     "expo-sharing": "~14.0.8",
     "expo-status-bar": "~3.0.9",
     "express": "^5.2.1",

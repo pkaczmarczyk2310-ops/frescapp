@@ -5,7 +5,6 @@
     "scheme": "frescapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "bundler": "metro",
 
     "icon": "./assets/icon.png",
 
@@ -31,9 +30,7 @@
     },
 
     "web": {
-      "bundler": "metro",
-      "favicon": "./assets/icon.png",
-      "output": "static"
+      "favicon": "./assets/icon.png"
     },
 
     "plugins": [
