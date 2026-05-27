@@ -455,23 +455,15 @@ if (activeSession) {
 
     return (
 
-      <CameraView
-        onBarcodeScanned={
-          handleBarCodeScanned
-        }
+<CameraView
+  selectedLens="builtInWideAngleCamera"
 
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
-        }}
+  zoom={0.01}
 
-        selectedLens="builtInWideAngleCamera"
-
-        zoom={0.01}
-
-        style={{
-          flex: 1,
-        }}
-      />
+  style={{
+    flex: 1,
+  }}
+/>
 
     );
   }
