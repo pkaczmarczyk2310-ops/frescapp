@@ -464,6 +464,8 @@ if (activeSession) {
           barcodeTypes: ["qr"],
         }}
 
+        selectedLens="builtInWideAngleCamera"
+
         style={{
           flex: 1,
         }}
