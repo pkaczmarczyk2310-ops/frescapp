@@ -33,15 +33,7 @@
     "web": {
       "bundler": "metro",
       "favicon": "./assets/icon.png",
-      "output": "static",
-
-      "manifest": {
-        "name": "FrescApp",
-        "short_name": "FrescApp",
-        "theme_color": "#ffffff",
-        "background_color": "#ffffff",
-        "display": "standalone"
-      }
+      "output": "static"
     },
 
     "plugins": [
