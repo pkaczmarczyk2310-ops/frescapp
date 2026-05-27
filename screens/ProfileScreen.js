@@ -208,7 +208,7 @@ export default function ProfileScreen({
   }
 
   async function generatePDF() {
-alert("PDF START");
+
     try {
       alert(calculateSalary());
       console.log(
