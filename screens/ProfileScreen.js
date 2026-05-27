@@ -1,4 +1,3 @@
-KURWA
 import { Platform } from "react-native";
 
 import {
