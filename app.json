@@ -30,7 +30,7 @@
     },
 
     "web": {
-      "favicon": "./assets/icon.png"
+      "favicon": "./public/favicon.ico"
     },
 
     "plugins": [
