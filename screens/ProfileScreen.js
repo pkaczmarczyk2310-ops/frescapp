@@ -210,7 +210,6 @@ export default function ProfileScreen({
   async function generatePDF() {
 
     try {
-      alert(calculateSalary());
       console.log(
   "WYPŁATA:",
   calculateSalary()
@@ -224,7 +223,7 @@ console.log(
 console.log(
   sessions
 );
-alert(calculateSalary());
+
       const response =
         await fetch(
           "https://frescapp.onrender.com/generate-pdf",
