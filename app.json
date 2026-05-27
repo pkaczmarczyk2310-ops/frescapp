@@ -6,17 +6,22 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "bundler": "metro",
+
     "icon": "./assets/icon.png",
+
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
+
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
@@ -24,9 +29,21 @@
       },
       "edgeToEdgeEnabled": true
     },
+
     "web": {
-      "favicon": "./assets/icon.png"
+      "bundler": "metro",
+      "favicon": "./assets/icon.png",
+      "output": "static",
+
+      "manifest": {
+        "name": "FrescApp",
+        "short_name": "FrescApp",
+        "theme_color": "#ffffff",
+        "background_color": "#ffffff",
+        "display": "standalone"
+      }
     },
+
     "plugins": [
       "expo-barcode-scanner"
     ]
