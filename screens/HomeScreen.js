@@ -100,9 +100,12 @@ export default function HomeScreen({
       return;
     }
 
-    const location =
-      await Location
-        .getLastKnownPositionAsync();
+const location =
+  await Location
+    .getCurrentPositionAsync({
+      accuracy:
+        Location.Accuracy.High,
+    });
 
     if (location) {
 
@@ -466,7 +469,6 @@ if (activeSession) {
         
 
         style={{
-          flex: 1,
         }}
       />
 
