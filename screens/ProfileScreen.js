@@ -32,7 +32,8 @@ export default function ProfileScreen({
   const [userData, setUserData] =
     useState(null);
 
-  const hourlyRate = 35;
+  const hourlyRate =
+  userData?.hourly_rate || 0;
 
   useEffect(() => {
 
@@ -195,11 +196,17 @@ export default function ProfileScreen({
 
   function calculateSalary() {
 
+
     const totalMinutes =
       getTotalMinutes();
 
     const totalHours =
       totalMinutes / 60;
+
+    console.log("RATE:", hourlyRate);
+console.log("MINUTES:", totalMinutes);
+console.log("HOURS:", totalHours);
+
 
     return (
       totalHours *
