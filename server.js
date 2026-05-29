@@ -1,4 +1,11 @@
+
+const {
+  createClient,
+} = require(
+  "@supabase/supabase-js"
+);
 const path = require("path");
+
 
 const express =
   require("express");
@@ -11,6 +18,12 @@ const PDFDocument =
 
 const app =
   express();
+
+const supabase =
+  createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  );
 
 // CORS
 app.use(
@@ -187,6 +200,50 @@ app.post(
     );
 
     doc.end();
+  }
+);
+app.get(
+  "/auto-close-sessions",
+
+  async (req, res) => {
+
+    const {
+      error,
+    } = await supabase
+
+      .from("work_sessions")
+
+      .update({
+
+        ended_at:
+          new Date()
+            .toISOString(),
+
+        is_active: false,
+
+        closed_automatically:
+          true,
+      })
+
+      .eq(
+        "is_active",
+        true
+      );
+
+    if (error) {
+
+      console.log(error);
+
+      return res
+        .status(500)
+        .json(error);
+    }
+
+    res.json({
+      success: true,
+      message:
+        "Zmiany zamknięte 😎",
+    });
   }
 );
 
