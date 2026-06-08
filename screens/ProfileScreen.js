@@ -1,5 +1,3 @@
-import { Platform } from "react-native";
-
 import {
   View,
   Text,
@@ -7,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  Platform,
 } from "react-native";
 
 import {
@@ -32,8 +31,68 @@ export default function ProfileScreen({
   const [userData, setUserData] =
     useState(null);
 
+    const [
+  selectedMonth,
+  setSelectedMonth,
+] = useState(
+  new Date().toISOString().slice(0, 7)
+);
+
   const hourlyRate =
   userData?.hourly_rate || 0;
+
+  const filteredSessions =
+  sessions.filter(
+    (session) =>
+
+      session.started_at
+        ?.slice(0, 7) ===
+      selectedMonth
+  );
+
+  function changeMonth(direction) {
+
+  const [year, month] =
+    selectedMonth
+      .split("-")
+      .map(Number);
+
+  const date =
+    new Date(
+      year,
+      month - 1 + direction,
+      1
+    );
+
+  const newMonth =
+    `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}`;
+
+  setSelectedMonth(
+    newMonth
+  );
+}
+
+function getMonthLabel() {
+
+  const [year, month] =
+    selectedMonth
+      .split("-")
+      .map(Number);
+
+  return new Date(
+    year,
+    month - 1,
+    1
+  ).toLocaleDateString(
+    "pl-PL",
+    {
+      month: "long",
+      year: "numeric",
+    }
+  );
+}
 
   useEffect(() => {
 
@@ -148,7 +207,7 @@ export default function ProfileScreen({
 
     let totalMinutes = 0;
 
-    sessions.forEach((session) => {
+    filteredSessions.forEach((session) => {
 
       if (!session.ended_at) {
         return;
@@ -194,25 +253,41 @@ export default function ProfileScreen({
     return `${hours}h ${minutes}min`;
   }
 
-  function calculateSalary() {
+function calculateSalary() {
 
+  let salary = 0;
 
-    const totalMinutes =
-      getTotalMinutes();
+  filteredSessions.forEach(
+    (session) => {
 
-    const totalHours =
-      totalMinutes / 60;
+      if (!session.ended_at) {
+        return;
+      }
 
-    console.log("RATE:", hourlyRate);
-console.log("MINUTES:", totalMinutes);
-console.log("HOURS:", totalHours);
+      const start =
+        new Date(
+          session.started_at
+        );
 
+      const end =
+        new Date(
+          session.ended_at
+        );
 
-    return (
-      totalHours *
-      hourlyRate
-    ).toFixed(2);
-  }
+      const hours =
+        (end - start) /
+        (1000 * 60 * 60);
+
+      salary +=
+        hours *
+        (
+          session.hourly_rate || 0
+        );
+    }
+  );
+
+  return salary.toFixed(2);
+}
 
   async function generatePDF() {
 
@@ -257,7 +332,7 @@ console.log(
               amount:
   Number(calculateSalary()),
 
-              sessions,
+              sessions: filteredSessions,
             }),
           }
         );
@@ -328,7 +403,7 @@ console.log(
 
       <FlatList
 
-        data={sessions}
+        data={filteredSessions}
 
         keyExtractor={(item) =>
           item.id.toString()
@@ -357,6 +432,60 @@ contentContainerStyle={{
             <Text style={styles.email}>
               {user.email}
             </Text>
+
+            <View
+  style={{
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 25,
+  }}
+>
+
+  <TouchableOpacity
+    onPress={() =>
+      changeMonth(-1)
+    }
+  >
+    <Text
+      style={{
+        fontSize: 28,
+        fontWeight: "bold",
+      }}
+    >
+      ◀️
+    </Text>
+  </TouchableOpacity>
+
+  <Text
+    style={{
+      fontSize: 18,
+      fontWeight: "800",
+      textTransform:
+        "capitalize",
+    }}
+  >
+    {getMonthLabel()}
+  </Text>
+
+  <TouchableOpacity
+    onPress={() =>
+      changeMonth(1)
+    }
+  >
+    <Text
+      style={{
+        fontSize: 28,
+        fontWeight: "bold",
+      }}
+    >
+      ▶️
+    </Text>
+  </TouchableOpacity>
+
+</View>
+
+
 
             <View style={styles.topButtons}>
 
