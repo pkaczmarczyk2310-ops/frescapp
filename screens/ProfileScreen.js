@@ -337,7 +337,9 @@ console.log(
         showsVerticalScrollIndicator={
           false
         }
-
+contentContainerStyle={{
+  paddingBottom: 120,
+}}
         ListHeaderComponent={
 
           <>
@@ -419,6 +421,9 @@ console.log(
         renderItem={({ item }) => (
 
           <View style={styles.card}>
+                        <Text style={styles.location}>
+              📍 {item.location_name}
+            </Text>
 
             <Text style={styles.label}>
               START
@@ -436,9 +441,7 @@ console.log(
               STOP
             </Text>
 
-            <Text style={styles.location}>
-              📍 {item.location_name}
-            </Text>
+
 
             <Text style={styles.value}>
               {
@@ -449,15 +452,46 @@ console.log(
                   : "W trakcie 🚀"
               }
             </Text>
-
+            {
+  item.created_by_manager && (
+    <Text
+      style={{
+        color: "#2196f3",
+        fontSize: 16,
+        fontWeight: "800",
+        marginTop: 10,
+      }}
+    >
+      📝 Zmiana dodana przez managera
+    </Text>
+  )
+}
+{
+  item.closed_automatically && (
+    <Text
+      style={{
+        color: "#ff9800",
+        fontSize: 16,
+        fontWeight: "800",
+        marginTop: 10,
+      }}
+    >
+      ⚠️ Zmiana zamknięta automatycznie
+    </Text>
+  )
+}
             <Text style={styles.hours}>
-              ⏱️ {
-                calculateHours(
-                  item.started_at,
-                  item.ended_at
-                )
-              }
-            </Text>
+
+              
+  ⏱️ {
+    calculateHours(
+      item.started_at,
+      item.ended_at
+    )
+  }
+</Text>
+
+
 
           </View>
 
@@ -583,7 +617,7 @@ const styles = StyleSheet.create({
   },
 
   location: {
-    color: "#666",
+    color: "#016b07",
     fontSize: 14,
     marginBottom: 12,
   },

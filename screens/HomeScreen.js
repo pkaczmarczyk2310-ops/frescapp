@@ -196,6 +196,9 @@ const location =
 
           location_name:
             locationName,
+            
+            hourly_rate:
+  userData?.hourly_rate || 0,
         },
       ])
       .select();

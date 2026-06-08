@@ -131,7 +131,7 @@ export default function App() {
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "700",
-            marginBottom: 8,
+            marginBottom: 2,
           },
 
           tabBarIcon: () => {
