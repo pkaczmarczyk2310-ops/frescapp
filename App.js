@@ -112,15 +112,14 @@ export default function App() {
             right: 20,
             elevation: 0,
             backgroundColor: "#fff",
-            borderRadius: 24,
-            height: 80,
+            borderRadius: 0,
             borderTopWidth: 0,
 
             shadowColor: "#000",
 
             shadowOpacity: 0.08,
 
-            shadowRadius: 20,
+            shadowRadius: 0,
 
             shadowOffset: {
               width: 0,
@@ -131,7 +130,7 @@ export default function App() {
           tabBarLabelStyle: {
             fontSize: 12,
             fontWeight: "700",
-            marginBottom: 2,
+            marginBottom: 0,
           },
 
           tabBarIcon: () => {

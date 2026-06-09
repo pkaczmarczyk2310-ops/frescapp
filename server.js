@@ -202,6 +202,18 @@ app.post(
     doc.end();
   }
 );
+
+app.get(
+  "/",
+  (req, res) => {
+
+    res.send(
+      "FrescApp działa 😎"
+    );
+
+  }
+);
+
 app.get(
   "/auto-close-sessions",
 
